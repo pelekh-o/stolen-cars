@@ -27,11 +27,13 @@ public class Dataset implements Serializable {
     private int carscount;
 
     public Dataset() {
-        created = updated = new Date();
+        this.created = new Date();
+        this.updated = new Date();
     }
 
     public Dataset(String url, int carscount) {
-        this.created = updated = new Date();
+        this.created = new Date();
+        this.updated = new Date();
         this.url = url;
         this.carscount = carscount;
     }
@@ -81,6 +83,7 @@ public class Dataset implements Serializable {
         return "Dataset{" +
                 "datasetid=" + datasetid +
                 ", created=" + created +
+                ", updated=" + updated +
                 ", url='" + url + '\'' +
                 ", carscount=" + carscount +
                 '}';

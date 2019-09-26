@@ -21,7 +21,6 @@ CREATE TABLE IF NOT EXISTS car (
 CREATE TABLE IF NOT EXISTS dataset (
     datasetid INT UNSIGNED NOT NULL AUTO_INCREMENT,
     created DATETIME,
-    filesize INTEGER,
     url VARCHAR(500),
     carscount INTEGER,
     updated DATETIME,
@@ -46,4 +45,4 @@ CREATE TABLE IF NOT EXISTS message (
     messagescount INT,
     PRIMARY KEY (id),
     FOREIGN KEY (id) REFERENCES user (id)
-)
+) ENGINE=INNODB DEFAULT CHARSET=utf8;

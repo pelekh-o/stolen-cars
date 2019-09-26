@@ -9,7 +9,6 @@ import persistence.HibernateUtil;
 
 import java.sql.SQLException;
 import java.util.Collection;
-import java.util.Date;
 
 public class DatasetDAOImpl implements DatasetDAO {
     private static final Logger log = Logger.getLogger(DatasetDAOImpl.class);
@@ -34,21 +33,14 @@ public class DatasetDAOImpl implements DatasetDAO {
     }
 
     @Override
-    public void updateDataset(Dataset dataset, Date updated) throws SQLException {
-        Session session = null;
-        try {
-            session = HibernateUtil.getSessionFactory().openSession();
-            session.beginTransaction();
-            dataset.setUpdated(updated);
-            session.update(dataset);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            log.warn(e.getMessage());
-        } finally {
-            if (session != null && session.isOpen()) {
-                session.close();
-            }
-        }
+    public void updateDataset(Dataset dataset) throws SQLException {
+        Session session = HibernateUtil.getSessionFactory().openSession();
+        Transaction transaction = session.beginTransaction();
+        session.createQuery("update Dataset d set d.updated = :updated where d.id = :id")
+                .setParameter("updated", dataset.getUpdated())
+                .setParameter("id", dataset.getDatasetid()).executeUpdate();
+        transaction.commit();
+        session.close();
     }
 
     @Override

@@ -3,12 +3,11 @@ package dao;
 import entity.Car;
 
 import java.sql.SQLException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
 public interface CarDAO {
-    void addCar(Car car) throws SQLException;
+    boolean addCar(Car car) throws SQLException;
     Car getCarById(Integer Id) throws SQLException;
     List getAllCars() throws SQLException;
     List getCarByVehicleNumber(String vehicleNumber) throws SQLException;

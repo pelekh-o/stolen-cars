@@ -17,12 +17,16 @@ public class CarDAOImpl implements CarDAO {
     private static final Logger log = Logger.getLogger(CarDAOImpl.class);
 
     @Override
-    public void addCar(Car car) {
-        Session session = HibernateUtil.getSessionFactory().openSession();
-        Transaction transaction = session.beginTransaction();
-        session.save(car);
-        transaction.commit();
-        session.close();
+    public boolean addCar(Car car) {
+        if (!isCarExists(car)) {
+            Session session = HibernateUtil.getSessionFactory().openSession();
+            Transaction transaction = session.beginTransaction();
+            session.save(car);
+            transaction.commit();
+            session.close();
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -46,7 +50,7 @@ public class CarDAOImpl implements CarDAO {
     @Override
     public List getCarByTheftDate(String theftDate) {
         return HibernateUtil.getSessionFactory().openSession()
-                .createQuery("select c from Car c where c.THEFT_DATA LIKE :theftDate")
+                .createQuery("select c from Car c where c.THEFT_DATA = :theftDate")
                 .setParameter("theftDate", theftDate + "%")
                 .list();
     }
@@ -54,7 +58,7 @@ public class CarDAOImpl implements CarDAO {
     @Override
     public List getCarByInsertDate(Date insertDate) {
         return HibernateUtil.getSessionFactory().openSession()
-                .createQuery("select c from Car c where c.THEFT_DATA LIKE :insertDate")
+                .createQuery("select c from Car c where c.THEFT_DATA = :insertDate")
                 .setParameter("insertDate", insertDate + "%")
                 .list();
     }
@@ -91,7 +95,9 @@ public class CarDAOImpl implements CarDAO {
     }
 
     public Boolean isCarExists(Car car) {
-        return HibernateUtil.getSessionFactory().openSession()
-                .get(Car.class, car.getCAR_ID()) != null;
+        return !HibernateUtil.getSessionFactory().openSession()
+                .createQuery("select c from Car c where c.ID = :id")
+                .setParameter("id", car.getID())
+                .list().isEmpty();
     }
 }

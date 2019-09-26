@@ -48,15 +48,12 @@ public class Parser {
         if(dbUpdDate.before(pageUpdDate)){
             return true;
         } else {
-            Factory.getInstance().getDatasetDAO().updateDataset(dataset, new Date());
+            dataset.setUpdated(new Date());
+            Factory.getInstance().getDatasetDAO().updateDataset(dataset);
             return false;
         }
     }
 
-    /**
-     *
-     * @throws Exception
-     */
     public void retrieveUpdates() throws IOException, SQLException {
         // W/ help: http://www.acuriousanimal.com/2015/10/23/reading-json-file-in-stream-mode-with-gson.html
 
@@ -76,10 +73,9 @@ public class Parser {
         while (reader.hasNext()) {
             Car car = gson.fromJson(reader, Car.class);
             carsCount++;
-            if (!Factory.getInstance().getCarDAO().isCarExists(car)) {
-                Factory.getInstance().getCarDAO().addCar(car);
+
+            if(Factory.getInstance().getCarDAO().addCar(car))
                 log.info("New car found: " + car);
-            }
         }
         reader.close();
         Factory.getInstance().getDatasetDAO().addDataset(new Dataset(datasetURL, carsCount));

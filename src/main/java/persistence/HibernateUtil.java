@@ -1,6 +1,7 @@
 package persistence;
 
 import entity.Car;
+import entity.CarInfo;
 import entity.Dataset;
 import entity.User;
 import org.apache.log4j.Logger;
@@ -27,6 +28,7 @@ public class HibernateUtil {
             configuration.addAnnotatedClass(Dataset.class);
             configuration.addAnnotatedClass(Car.class);
             configuration.addAnnotatedClass(User.class);
+            configuration.addAnnotatedClass(CarInfo.class);
             configuration.configure("hibernate.cfg.xml");
 
             ServiceRegistry serviceRegistry = new StandardServiceRegistryBuilder()

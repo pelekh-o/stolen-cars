@@ -7,7 +7,7 @@
     <session-factory>
         <property name="hibernate.connection.driver_class">org.mariadb.jdbc.Driver</property>
         <property name="hibernate.connection.url">jdbc:mariadb://localhost:3306/stolen_cars</property>
-        <property name="hibernate.connection.pool_size">1</property>
+        <property name="hibernate.connection.pool_size">1000</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MariaDBDialect</property>
@@ -15,5 +15,6 @@
         <mapping class="entity.Car"/>
         <mapping class="entity.Dataset"/>
         <mapping class="entity.User"/>
+        <mapping class="entity.CarInfo"/>
     </session-factory>
 </hibernate-configuration>

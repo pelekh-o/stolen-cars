@@ -1,9 +1,11 @@
 package persistence;
 
 import dao.CarDAO;
+import dao.CarInfoDAO;
 import dao.DatasetDAO;
 import dao.UserDAO;
 import dao.implementation.CarDAOImpl;
+import dao.implementation.CarInfoDAOImpl;
 import dao.implementation.DatasetDAOImpl;
 import dao.implementation.UserDAOImpl;
 
@@ -11,6 +13,7 @@ public class Factory {
     private static CarDAO carDAO = null;
     private static DatasetDAO datasetDAO = null;
     private static UserDAO userDAO = null;
+    private static CarInfoDAO carInfoDAO = null;
     private static Factory instance = null;
 
     public static synchronized Factory getInstance() {
@@ -39,6 +42,13 @@ public class Factory {
             userDAO = new UserDAOImpl();
         }
         return userDAO;
+    }
+
+    public CarInfoDAO getCarInfoDAO() {
+        if (carInfoDAO == null) {
+            carInfoDAO = new CarInfoDAOImpl();
+        }
+        return carInfoDAO;
     }
 
 }

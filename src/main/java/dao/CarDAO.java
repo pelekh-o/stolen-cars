@@ -17,5 +17,4 @@ public interface CarDAO {
     List getCarByRegion(String region) throws SQLException;
     List getCarByBrand(String brand) throws SQLException;
     Boolean isCarExists(Car car) throws SQLException;
-
 }

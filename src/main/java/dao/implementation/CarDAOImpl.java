@@ -42,8 +42,8 @@ public class CarDAOImpl implements CarDAO {
     @Override
     public List getCarByVehicleNumber(String vehicleNumber) {
         return HibernateUtil.getSessionFactory().openSession()
-                .createQuery("select c from Car c where c.VEHICLENUMBER LIKE :vehicleNumber")
-                .setParameter("vehicleNumber", "%" +  vehicleNumber + "%")
+                .createQuery("select c from Car c where c.VEHICLENUMBER = :vehicleNumber order by c.THEFT_DATA desc ")
+                .setParameter("vehicleNumber", vehicleNumber)
                 .list();
     }
 

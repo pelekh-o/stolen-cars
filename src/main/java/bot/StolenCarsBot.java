@@ -5,18 +5,18 @@ import bot.commands.StartCommand;
 import bot.commands.StopCommand;
 import com.vdurmont.emoji.EmojiParser;
 import entity.Car;
+import entity.CarInfo;
 import org.telegram.telegrambots.extensions.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 import persistence.Factory;
+import services.BotConfig;
 import services.Emoji;
-
-import java.sql.SQLException;
-import java.util.List;
-
-import static services.BotConfig.BOT_TOKEN;
+import java.sql.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 
 public class StolenCarsBot extends TelegramLongPollingCommandBot {
 
@@ -55,35 +55,12 @@ public class StolenCarsBot extends TelegramLongPollingCommandBot {
 
         Message message = update.getMessage();
         if (message.hasText()) {
-            StringBuilder answerBuilder = new StringBuilder();
             SendMessage sendMessage = new SendMessage();
             sendMessage.setChatId(message.getChatId());
-
-            List<Car> cars = null;
-            try {
-                cars = Factory.getInstance().getCarDAO().getCarByVehicleNumber(message.getText());
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-            if (!cars.isEmpty()) {
-                if (cars.size() > 1)
-                    answerBuilder.append("Знайдено ").append(cars.size())
-                            .append(" ТЗ із номером ").append(message.getText()).append("\n\n");
-                for (Car car : cars) {
-                    answerBuilder.append(Emoji.replaceCarTypeWithEmoji(car.getBRAND())).append("\n");
-                    answerBuilder.append(EmojiParser.parseToUnicode(":hash:")).append(" ");
-                    answerBuilder.append(car.getVEHICLENUMBER()).append("\n");
-                    answerBuilder.append(EmojiParser.parseToUnicode(":calendar:")).append(" Викрадено: ");
-                    answerBuilder.append(car.getTHEFT_DATA()).append("\n\n");
-                }
-            } else
-                answerBuilder.append("У базі викрадених не знайдено авто з номером ")
-                        .append(message.getText());
-
             sendMessage.enableHtml(true);
-            sendMessage.setText(answerBuilder.toString());
-
+            String answerText = setAnswerText(message);
+            sendMessage.setText(answerText);
+            System.out.println(answerText);
             try {
                 execute(sendMessage);
             } catch (TelegramApiException e) {
@@ -92,8 +69,72 @@ public class StolenCarsBot extends TelegramLongPollingCommandBot {
         }
     }
 
+    private String setAnswerText(Message message) {
+        String messageText = message.getText().toUpperCase();
+        StringBuilder answerBuilder = new StringBuilder();
+        DateFormat dateFormat = new SimpleDateFormat("dd MMMM yyyy");
+
+        Car car = null;
+        CarInfo carInfo = null;
+        Date theftDate = null;
+        String brand = null;
+        boolean isWanted = true;
+        boolean isFullInfo = true;
+
+        answerBuilder.append("Інформація про транспортний засіб із номером <b>")
+                .append(messageText).append("</b>:\n\n");
+
+        try {
+            car = (Car) Factory.getInstance().getCarDAO().getCarByVehicleNumber(messageText).get(0);
+            brand = Emoji.replaceCarTypeWithEmoji(car.getBRAND());
+            theftDate = car.getTHEFT_DATA();
+        } catch (Exception e) {
+            isWanted = false;
+        }
+
+        try {
+            carInfo = (CarInfo) Factory.getInstance().getCarInfoDAO().getCarByVehicleNumber(messageText).get(0);
+            if (brand == null) brand = carInfo.getBrand();
+        } catch (Exception e) {
+            isFullInfo = false;
+        }
+
+        if (!isFullInfo && !isWanted)
+            answerBuilder.append("НЕ ЗНАЙДЕНО");
+        else {
+            answerBuilder.append("<b>").append(brand).append("</b>\n");
+
+            if (isWanted) {
+                answerBuilder.append(EmojiParser.parseToUnicode(":calendar:"))
+                        .append(" <b>Викрадено: ")
+                        .append(dateFormat.format(theftDate))
+                        .append("</b>\n");
+                String vin = car.getBODYNUMBER();
+                if (!vin.equals(""))
+                    answerBuilder.append("\nVIN: ").append(vin);
+            }
+            else {
+                answerBuilder.append("ТЗ немає у базі викрадених\n\n");
+            }
+
+            if (isFullInfo) {
+                answerBuilder.append("\nКузов: ").append(carInfo.getKind().toLowerCase())
+                        .append(" ").append(carInfo.getBody().toLowerCase());
+                answerBuilder.append("\nРік виготовлення: ").append(carInfo.getMakeYear());
+                answerBuilder.append("\nКолір: ").append(carInfo.getColor().toLowerCase());
+                answerBuilder.append("\nПаливо: ").append(carInfo.getFuel().toLowerCase());
+                answerBuilder.append("\nОб\'єм двигуна: ").append(carInfo.getCapacity());
+                answerBuilder.append("\nВага: ").append(carInfo.getTotalWeight());
+                answerBuilder.append("\nРеєстрація: ").append(dateFormat.format(carInfo.getRegdate()));
+                answerBuilder.append("\nТип реєстрації: ").append(carInfo.getOperationName().toLowerCase());
+            }
+        }
+
+        return answerBuilder.toString();
+    }
+
     @Override
     public String getBotToken() {
-        return BOT_TOKEN;
+        return BotConfig.BOT_TOKEN;
     }
 }

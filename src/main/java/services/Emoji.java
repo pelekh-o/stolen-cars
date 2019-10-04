@@ -19,7 +19,7 @@ public class Emoji {
             case "мопед":
             case "мотоцикл":
             case "моторолер":
-                emojiType = EmojiParser.parseToUnicode(":bike:");
+                emojiType = EmojiParser.parseToUnicode(":motorbike:");
                 break;
             case "вантажний автотранспорт":
                 emojiType = EmojiParser.parseToUnicode(":truck:");

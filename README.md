@@ -4,7 +4,9 @@
 
 Bot for Telegram that allows  to retrieve the up-to-date information about stolen vehicles in Ukraine. 
 
-Information about stolen vehicles is obtained from the [Ukrainian Open Data Portal](https://data.gov.ua/en/dataset/2a746426-b289-4eb2-be8f-aac03e68948c).
+Information about stolen vehicles is obtained from the [Ukrainian Open Data Portal](https://data.gov.ua/):
+* [Information about wanted vehicles](https://data.gov.ua/en/dataset/2a746426-b289-4eb2-be8f-aac03e68948c)
+* [Information about vehicles and their owners](https://data.gov.ua/en/dataset/2a746426-b289-4eb2-be8f-aac03e68948c)
 
 ## Developed With
 

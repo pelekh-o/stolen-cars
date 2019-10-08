@@ -19,7 +19,7 @@ for file in $path
             (person, reg_addr_koatuu, operation_code, operation_name, @regdate, 
             department_code, department_name, brand, model, make_year, color, 
             kind, body, purpose, fuel, capacity, own_weight, total_weight, 
-            vechicle_number)
+            vehicle_number)
             SET regdate = STR_TO_DATE(@regdate, '%d.%m.%Y');" -u "$user" --password="$password" --local-infile
 
         printf "Completed importing %s\n" "$file"
